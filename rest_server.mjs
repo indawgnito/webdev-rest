@@ -17,37 +17,37 @@ app.use(express.json());
  ********************************************************************/
 // Open SQLite3 database (in read-write mode)
 let db = new sqlite3.Database(db_filename, sqlite3.OPEN_READWRITE, (err) => {
-    if (err) {
-        console.log("Error opening " + path.basename(db_filename));
-    } else {
-        console.log("Now connected to " + path.basename(db_filename));
-    }
+  if (err) {
+    console.log("Error opening " + path.basename(db_filename));
+  } else {
+    console.log("Now connected to " + path.basename(db_filename));
+  }
 });
 
 // Create Promise for SQLite3 database SELECT query
 function dbSelect(query, params) {
-    return new Promise((resolve, reject) => {
-        db.all(query, params, (err, rows) => {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(rows);
-            }
-        });
+  return new Promise((resolve, reject) => {
+    db.all(query, params, (err, rows) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(rows);
+      }
     });
+  });
 }
 
 // Create Promise for SQLite3 database INSERT or DELETE query
 function dbRun(query, params) {
-    return new Promise((resolve, reject) => {
-        db.run(query, params, (err) => {
-            if (err) {
-                reject(err);
-            } else {
-                resolve();
-            }
-        });
+  return new Promise((resolve, reject) => {
+    db.run(query, params, (err) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve();
+      }
     });
+  });
 }
 
 /********************************************************************
@@ -55,52 +55,96 @@ function dbRun(query, params) {
  ********************************************************************/
 // GET request handler for crime codes
 app.get("/codes", (req, res) => {
-    console.log(req.query); // query object (key-value pairs after the ? in the url)
-    let allCodes = dbSelect("SELECT * FROM Codes");
-    // console.log(allCodes);
-    Promise.all([allCodes]).then((results) => {
-        console.log(results);
-    });
+  console.log(req.query); // query object (key-value pairs after the ? in the url)
 
-    res.status(200).type("json").send({}); // <-- you will need to change this
+  let codes;
+
+  // codes can be separates by comma
+  // ex: http://localhost:8000/codes?code=100,207,301
+
+  // if there is at least one code in the query
+  if (req.query.code) {
+    // store list of codes
+    let code = req.query.code;
+
+    // if there is more than one code
+    if (code.includes(",")) {
+      // split the codes by comma
+      let codes = code.split(",");
+
+      let queries = [];
+
+      // create a query for each code
+      codes.forEach((code) => {
+        queries.push(dbSelect("SELECT * FROM Codes WHERE code = ?", code));
+      });
+
+      // run all queries
+      Promise.all(queries)
+        .then((results) => {
+          // change from a list of lists to a list
+          results = results.flat();
+          res.status(200).type("json").send(results);
+        })
+        .catch((err) => {
+          res.status(500).type("txt").send(err);
+        });
+
+      // if there is only one code
+    } else {
+      // run query
+      code = dbSelect("SELECT * FROM Codes WHERE code = ?", code);
+
+      code.then((results) => {
+        res.status(200).type("json").send(results);
+      });
+    }
+  } else {
+    // send all the codes
+    let allCodes = dbSelect("SELECT * FROM Codes");
+
+    allCodes.then((results) => {
+      res.status(200).type("json").send(results);
+    });
+  }
 });
 
 // GET request handler for neighborhoods
 app.get("/neighborhoods", (req, res) => {
-    console.log(req.query); // query object (key-value pairs after the ? in the url)
-    let allNeighborhoods = dbSelect("SELECT * FROM Neighborhoods");
+  console.log(req.query); // query object (key-value pairs after the ? in the url)
+  let allNeighborhoods = dbSelect("SELECT * FROM Neighborhoods");
 
-    Promise.all([allNeighborhoods]).then((results) => {
-        console.log(results);
-    });
+  Promise.all([allNeighborhoods]).then((results) => {
+    console.log(results);
+  });
 
-    res.status(200).type("json").send({}); // <-- you will need to change this
+  res.status(200).type("json").send({}); // <-- you will need to change this
 });
 
 // GET request handler for crime incidents
 app.get("/incidents", (req, res) => {
-    console.log(req.query); // query object (key-value pairs after the ? in the url)
-    let allIncidents = dbSelect("SELECT * FROM Incidents");
+  console.log(req.query); // query object (key-value pairs after the ? in the url)
+  let allIncidents = dbSelect("SELECT * FROM Incidents");
 
-    Promise.all([allIncidents]).then((results) => {
-        console.log(results);
-    });
+  Promise.all([allIncidents]).then((results) => {
+    console.log(results);
+  });
 
-    res.status(200).type("json").send({}); // <-- you will need to change this
+  res.status(200).type("json").send({}); // <-- you will need to change this
 });
 
 // PUT request handler for new crime incident
 app.put("/new-incident", (req, res) => {
-    console.log(req.body); // uploaded data
+  console.log(req.body); // uploaded data
 
-    res.status(200).type("txt").send("OK"); // <-- you may need to change this
+  res.status(200).type("txt").send("OK"); // <-- you may need to change this
 });
 
 // DELETE request handler for new crime incident
 app.delete("/remove-incident", (req, res) => {
-    console.log(req.body); // uploaded data
+  console.log(req.body); // uploaded data
 
-    res.status(200).type("txt").send("OK"); // <-- you may need to change this
+  res.status(200).type("txt").send("OK"); // <-- you may need to change this
 });
 
 /********************************************************************
@@ -108,7 +152,7 @@ app.delete("/remove-incident", (req, res) => {
  ********************************************************************/
 // Start server - listen for client connections
 app.listen(port, () => {
-    console.log("Now listening on port " + port);
+  console.log("Now listening on port " + port);
 });
 
 // TO PUT
