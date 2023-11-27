@@ -84,6 +84,7 @@ app.get("/codes", (req, res) => {
         .then((results) => {
           // change from a list of lists to a list
           results = results.flat();
+
           res.status(200).type("json").send(results);
         })
         .catch((err) => {
@@ -112,13 +113,66 @@ app.get("/codes", (req, res) => {
 // GET request handler for neighborhoods
 app.get("/neighborhoods", (req, res) => {
   console.log(req.query); // query object (key-value pairs after the ? in the url)
-  let allNeighborhoods = dbSelect("SELECT * FROM Neighborhoods");
 
-  Promise.all([allNeighborhoods]).then((results) => {
-    console.log(results);
-  });
+  let neighborhoods;
 
-  res.status(200).type("json").send({}); // <-- you will need to change this
+  // neighborhoods can be separates by comma
+  // ex: http://localhost:8000/neighborhoods?id=1,2,3
+
+  // if there is at least one neighborhood in the query
+  if (req.query.id) {
+    // store list of neighborhoods
+    let id = req.query.id;
+
+    // if there is more than one neighborhood
+    if (id.includes(",")) {
+      // split the neighborhoods by comma
+      let ids = id.split(",");
+
+      let queries = [];
+
+      // create a query for each neighborhood
+      ids.forEach((id) => {
+        queries.push(
+          dbSelect(
+            "SELECT * FROM Neighborhoods WHERE neighborhood_number = ?",
+            id
+          )
+        );
+      });
+
+      // run all queries
+      Promise.all(queries)
+        .then((results) => {
+          // change from a list of lists to a list
+          results = results.flat();
+
+          res.status(200).type("json").send(results);
+        })
+        .catch((err) => {
+          res.status(500).type("txt").send(err);
+        });
+
+      // if there is only one neighborhood in the query
+    } else {
+      // run query
+      id = dbSelect(
+        "SELECT * FROM Neighborhoods WHERE neighborhood_number = ?",
+        id
+      );
+
+      id.then((results) => {
+        res.status(200).type("json").send(results);
+      });
+    }
+  } else {
+    // send all the neighborhoods
+    let allNeighborhoods = dbSelect("SELECT * FROM Neighborhoods");
+
+    allNeighborhoods.then((results) => {
+      res.status(200).type("json").send(results);
+    });
+  }
 });
 
 // GET request handler for crime incidents
