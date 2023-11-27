@@ -57,8 +57,6 @@ function dbRun(query, params) {
 app.get("/codes", (req, res) => {
   console.log(req.query); // query object (key-value pairs after the ? in the url)
 
-  let codes;
-
   // codes can be separates by comma
   // ex: http://localhost:8000/codes?code=100,207,301
 
@@ -113,8 +111,6 @@ app.get("/codes", (req, res) => {
 // GET request handler for neighborhoods
 app.get("/neighborhoods", (req, res) => {
   console.log(req.query); // query object (key-value pairs after the ? in the url)
-
-  let neighborhoods;
 
   // neighborhoods can be separates by comma
   // ex: http://localhost:8000/neighborhoods?id=1,2,3
