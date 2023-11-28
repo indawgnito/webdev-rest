@@ -376,29 +376,27 @@ app.put("/new-incident", (req, res) => {
   // res.status(200).type("txt").send("OK"); // <-- you may need to change this
 });
 
+
 // DELETE request handler for new crime incident
 app.delete("/remove-incident", (req, res) => {
   const incident = "SELECT * FROM Incidents WHERE case_number = ?";
   const deleteQ = "DELETE FROM Incidents WHERE case_number = ?";
-  const params = [parseInt(req.query.case_number)];
-
-  dbSelect(incident, params)
+  const caseNumber = parseInt(req.body.case_number);
+  dbSelect(incident, [caseNumber])
     .then((rows) => {
-      if (rows.length > 0) {
-        return dbRun(deleteQ, params);
-      } else {
+      if (rows.length === 0) {
         throw new Error("Case Number Not Found");
+      } else {
+        return dbRun(deleteQ, [caseNumber]);
       }
     })
     .then(() => {
-      console.log(`${params} has been deleted`);
-      res
-        .status(200)
-        .type("txt")
-        .send(`Case number ${params} has been deleted.`);
+      console.log(`${caseNumber} has been deleted`);
+      res.status(200).type("txt").send(`Case number ${caseNumber} has been deleted.`);
     })
     .catch((error) => {
-      res.status(500).type("txt").send("Case Number Not Found");
+      console.error(error.message)
+      res.status(500).type("txt").send(error.message);
     });
 });
 
@@ -424,3 +422,9 @@ app.listen(port, () => {
 
 // TO DELETE
 // curl -X DELETE "http://localhost:8000/remove-incident" -H "Content-Type: application/json" -d '{"case_number": "19245020"}'
+//this works: curl -X DELETE "http://localhost:8000/remove-incident" -H "Content-Type: application/json" -d "{\"case_number\": \"19245020\"}"
+//case number ..... has been deleted
+// and this works: curl -X DELETE "http://localhost:8000/remove-incident" -H "Content-Type: application/json" -d "{\"case_number\": \"19245014\"}"
+//Case number 19245014 has been deleted.
+//curl -X DELETE "http://localhost:8000/remove-incident" -H "Content-Type: application/json" -d "{\"case_number\": \"19245006\"}"
+//Case number 19245006 has been deleted.
