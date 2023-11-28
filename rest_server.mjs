@@ -353,11 +353,10 @@ app.put("/new-incident", (req, res) => {
   console.log(req.body); // uploaded data
   let newIncident = req.body;
   let addedIncident = dbRun(
-    "INSERT INTO Incidents (case_number, date, time, code, incident, police_grid, neighborhood_number, black) VALUES (?,?,?,?,?,?,?,?)",
+    "INSERT INTO Incidents (case_number, date_time, code, incident, police_grid, neighborhood_number, block) VALUES (?,?,?,?,?,?,?)",
     [
       newIncident.case_number,
-      newIncident.date,
-      newIncident.time,
+      `${newIncident.date}T${newIncident.time}`,
       newIncident.code,
       newIncident.incident,
       newIncident.police_grid,
@@ -370,8 +369,8 @@ app.put("/new-incident", (req, res) => {
     .then(() => {
       res.status(200).type("txt").send("OK");
     })
-    .catch(() => {
-      res.status(500).type("txt").send("Case already exists in table");
+    .catch((error) => {
+      res.status(500).type("txt").send(error);
     });
 
   // res.status(200).type("txt").send("OK"); // <-- you may need to change this
