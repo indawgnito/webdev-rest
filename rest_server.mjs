@@ -175,45 +175,124 @@ app.get("/neighborhoods", (req, res) => {
 app.get("/incidents", (req, res) => {
   console.log(req.query); // query object (key-value pairs after the ? in the url)
 
+  let sql = "SELECT * from Incidents";
+  let params = [];
 
-  
   if (req.query.code) {
     let code = req.query.code;
+    sql += " WHERE ";
 
     if (code.includes(",")) {
       // split the codes by comma
       let codes = code.split(",");
-
-      let queries = [];
+      sql += "(";
 
       // create a query for each code
-      codes.forEach((code) => {
-        queries.push(dbSelect("SELECT * FROM Codes WHERE code = ?", code));
+      codes.forEach((code, index, array) => {
+        if (index !== array.length - 1) {
+          sql += "code = ? OR ";
+          params.push(code);
+        } else {
+          sql += "code = ?";
+          params.push(code);
+        }
       });
 
-      // run all queries
-      Promise.all(queries)
-        .then((results) => {
-          // change from a list of lists to a list
-          results = results.flat();
-
-          res.status(200).type("json").send(results);
-        })
-        .catch((err) => {
-          res.status(500).type("txt").send(err);
-        });
+      sql += ")";
 
       // if there is only one code
     } else {
-      // run query
-      code = dbSelect("SELECT * FROM Codes WHERE code = ?", code);
-
-      code.then((results) => {
-        res.status(200).type("json").send(results);
-      });
+      sql += "code = ?";
+      params.push(code);
     }
   }
 
+  if (req.query.neighborhood) {
+    let neighborhood = req.query.neighborhood;
+
+    if (params.length === 0) {
+      sql += " WHERE ";
+    } else {
+      sql += " AND ";
+    }
+
+    if (neighborhood.includes(",")) {
+      // split the codes by comma
+      let neighborhoods = neighborhood.split(",");
+
+      sql += "(";
+
+      // create a query for each code
+      neighborhoods.forEach((neighborhood, index, array) => {
+        if (index !== array.length - 1) {
+          sql += "neighborhood_number = ? OR ";
+          params.push(neighborhood);
+        } else {
+          sql += "neighborhood_number = ?";
+          params.push(neighborhood);
+        }
+      });
+
+      sql += ")";
+
+      // if there is only one code
+    } else {
+      sql += "neighborhood_number = ?";
+      params.push(neighborhood);
+    }
+  }
+
+  if (req.query.grid) {
+    let grid = req.query.grid;
+
+    if (params.length === 0) {
+      sql += " WHERE ";
+    } else {
+      sql += " AND ";
+    }
+
+    if (grid.includes(",")) {
+      // split the codes by comma
+      let grids = grid.split(",");
+
+      sql += "(";
+
+      // create a query for each code
+      grids.forEach((grid, index, array) => {
+        if (index !== array.length - 1) {
+          sql += "police_grid = ? OR ";
+          params.push(grid);
+        } else {
+          sql += "police_grid = ?";
+          params.push(grid);
+        }
+      });
+
+      sql += ")";
+
+      // if there is only one code
+    } else {
+      sql += "police_grid = ?";
+      params.push(grid);
+    }
+  }
+
+  if (req.query.limit) {
+    sql += ` LIMIT ${req.query.limit}`;
+  } else {
+    sql += " LIMIT 1000";
+  }
+
+  console.log(sql);
+  console.log(params);
+
+  dbSelect(sql, params)
+    .then((results) => {
+      res.status(200).type("json").send(results);
+    })
+    .catch((error) => {
+      res.status(500).type("txt").send(error);
+    });
   // let allIncidents = dbSelect("SELECT * FROM Incidents");
 
   // Promise.all([allIncidents]).then((results) => {
