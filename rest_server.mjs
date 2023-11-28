@@ -288,6 +288,50 @@ app.get("/incidents", (req, res) => {
 
   dbSelect(sql, params)
     .then((results) => {
+      // for each item in results, separate date_time property
+      // into date and time properties
+      results.forEach((item) => {
+        let date_time = item.date_time.split("T");
+        item.date = date_time[0];
+        item.time = date_time[1];
+        delete item.date_time;
+      });
+
+      // now that there is the date and time properties, sort by date.
+      // this should work because of the existing datetime format
+      results.sort((a, b) => {
+        if (a.date > b.date) {
+          return 1;
+        } else if (a.date < b.date) {
+          return -1;
+        } else {
+          // use time for tiebreaker
+          if (a.time > b.time) {
+            return 1;
+          } else if (a.time < b.time) {
+            return -1;
+          } else {
+            return 0;
+          }
+        }
+      });
+
+      // only grab items after start date, if there is one
+      if (req.query.start_date) {
+        let start_date = req.query.start_date;
+        results = results.filter((item) => {
+          return item.date >= start_date;
+        });
+      }
+
+      // and before end date, if there is one
+      if (req.query.end_date) {
+        let end_date = req.query.end_date;
+        results = results.filter((item) => {
+          return item.date <= end_date;
+        });
+      }
+
       res.status(200).type("json").send(results);
     })
     .catch((error) => {
@@ -312,7 +356,7 @@ app.put("/new-incident", (req, res) => {
     "INSERT INTO Incidents (case_number, date, time, code, incident, police_grid, neighborhood_number, black) VALUES (?,?,?,?,?,?,?,?)",
     [
       newIncident.case_number,
-      newIncident.data,
+      newIncident.date,
       newIncident.time,
       newIncident.code,
       newIncident.incident,
@@ -335,26 +379,28 @@ app.put("/new-incident", (req, res) => {
 
 // DELETE request handler for new crime incident
 app.delete("/remove-incident", (req, res) => {
-  const incident = 'SELECT * FROM Incidents WHERE case_number = ?'
-  const deleteQ = 'DELETE FROM Incidents WHERE case_number = ?'
+  const incident = "SELECT * FROM Incidents WHERE case_number = ?";
+  const deleteQ = "DELETE FROM Incidents WHERE case_number = ?";
   const params = [parseInt(req.query.case_number)];
 
   dbSelect(incident, params)
-  .then((rows) => {
-      if (rows.length > 0){
+    .then((rows) => {
+      if (rows.length > 0) {
         return dbRun(deleteQ, params);
-      }
-      else{
+      } else {
         throw new Error("Case Number Not Found");
       }
-  })
-  .then(() =>{
+    })
+    .then(() => {
       console.log(`${params} has been deleted`);
-      res.status(200).type('txt').send(`Case number ${params} has been deleted.`);
-  })
-  .catch((error) =>{
-    res.status(500).type('txt').send('Case Number Not Found');
-  })
+      res
+        .status(200)
+        .type("txt")
+        .send(`Case number ${params} has been deleted.`);
+    })
+    .catch((error) => {
+      res.status(500).type("txt").send("Case Number Not Found");
+    });
 });
 
 /********************************************************************
