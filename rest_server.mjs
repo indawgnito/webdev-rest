@@ -174,20 +174,84 @@ app.get("/neighborhoods", (req, res) => {
 // GET request handler for crime incidents
 app.get("/incidents", (req, res) => {
   console.log(req.query); // query object (key-value pairs after the ? in the url)
-  let allIncidents = dbSelect("SELECT * FROM Incidents");
 
-  Promise.all([allIncidents]).then((results) => {
-    console.log(results);
-  });
 
-  res.status(200).type("json").send({}); // <-- you will need to change this
+  
+  if (req.query.code) {
+    let code = req.query.code;
+
+    if (code.includes(",")) {
+      // split the codes by comma
+      let codes = code.split(",");
+
+      let queries = [];
+
+      // create a query for each code
+      codes.forEach((code) => {
+        queries.push(dbSelect("SELECT * FROM Codes WHERE code = ?", code));
+      });
+
+      // run all queries
+      Promise.all(queries)
+        .then((results) => {
+          // change from a list of lists to a list
+          results = results.flat();
+
+          res.status(200).type("json").send(results);
+        })
+        .catch((err) => {
+          res.status(500).type("txt").send(err);
+        });
+
+      // if there is only one code
+    } else {
+      // run query
+      code = dbSelect("SELECT * FROM Codes WHERE code = ?", code);
+
+      code.then((results) => {
+        res.status(200).type("json").send(results);
+      });
+    }
+  }
+
+  // let allIncidents = dbSelect("SELECT * FROM Incidents");
+
+  // Promise.all([allIncidents]).then((results) => {
+  //   results = results.flat();
+
+  //   res.status(200).type("json").send(results);
+  // });
+
+  // res.status(200).type("json").send({}); // <-- you will need to change this
 });
 
 // PUT request handler for new crime incident
 app.put("/new-incident", (req, res) => {
   console.log(req.body); // uploaded data
+  let newIncident = req.body;
+  let addedIncident = dbRun(
+    "INSERT INTO Incidents (case_number, date, time, code, incident, police_grid, neighborhood_number, black) VALUES (?,?,?,?,?,?,?,?)",
+    [
+      newIncident.case_number,
+      newIncident.data,
+      newIncident.time,
+      newIncident.code,
+      newIncident.incident,
+      newIncident.police_grid,
+      newIncident.neighborhood_number,
+      newIncident.block,
+    ]
+  );
 
-  res.status(200).type("txt").send("OK"); // <-- you may need to change this
+  addedIncident
+    .then(() => {
+      res.status(200).type("txt").send("OK");
+    })
+    .catch(() => {
+      res.status(500).type("txt").send("Case already exists in table");
+    });
+
+  // res.status(200).type("txt").send("OK"); // <-- you may need to change this
 });
 
 // DELETE request handler for new crime incident
