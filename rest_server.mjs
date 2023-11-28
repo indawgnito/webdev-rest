@@ -256,9 +256,26 @@ app.put("/new-incident", (req, res) => {
 
 // DELETE request handler for new crime incident
 app.delete("/remove-incident", (req, res) => {
-  console.log(req.body); // uploaded data
+  const incident = 'SELECT * FROM Incidents WHERE case_number = ?'
+  const deleteQ = 'DELETE FROM Incidents WHERE case_number = ?'
+  const params = [parseInt(req.query.case_number)];
 
-  res.status(200).type("txt").send("OK"); // <-- you may need to change this
+  dbSelect(incident, params)
+  .then((rows) => {
+      if (rows.length > 0){
+        return dbRun(deleteQ, params);
+      }
+      else{
+        throw new Error("Case Number Not Found");
+      }
+  })
+  .then(() =>{
+      console.log(`${params} has been deleted`);
+      res.status(200).type('txt').send(`Case number ${params} has been deleted.`);
+  })
+  .catch((error) =>{
+    res.status(500).type('txt').send('Case Number Not Found');
+  })
 });
 
 /********************************************************************
