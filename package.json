@@ -1,6 +1,6 @@
 {
-  "name": "rest_server",
-  "description": "REST Server",
+  "name": "stpaul_crime",
+  "description": "RESTful Web Server and Single Page Application",
   "version": "1.0.0",
   "author": {
     "name": "Benjamin Webb",
@@ -16,13 +16,20 @@
       "email": "kahl7683@stthomas.edu"
     }
   ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/indawgnito/webdev-rest"
+  "repository": {},
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
-    "cors": "^2.8.5",
     "express": "^4.18.2",
-    "sqlite3": "^5.1.6"
+    "cors": "^2.8.5",
+    "sqlite3": "^5.1.6",
+    "vue": "^3.3.4"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.4.0",
+    "vite": "^4.4.11"
   }
 }
