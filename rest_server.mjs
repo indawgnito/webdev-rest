@@ -277,6 +277,8 @@ app.get("/incidents", (req, res) => {
     }
   }
 
+  sql+= ` ORDER BY date_time DESC`;
+
   if (req.query.limit) {
     sql += ` LIMIT ${req.query.limit}`;
   } else {
@@ -299,22 +301,7 @@ app.get("/incidents", (req, res) => {
 
       // now that there is the date and time properties, sort by date.
       // this should work because of the existing datetime format
-      results.sort((a, b) => {
-        if (a.date > b.date) {
-          return 1;
-        } else if (a.date < b.date) {
-          return -1;
-        } else {
-          // use time for tiebreaker
-          if (a.time > b.time) {
-            return 1;
-          } else if (a.time < b.time) {
-            return -1;
-          } else {
-            return 0;
-          }
-        }
-      });
+    
 
       // only grab items after start date, if there is one
       if (req.query.start_date) {
