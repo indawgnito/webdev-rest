@@ -59,7 +59,6 @@ onMounted(() => {
   map.leaflet.on("moveend", () => {
     map.center.lat = map.leaflet.getCenter().lat;
     map.center.lng = map.leaflet.getCenter().lng;
-    console.log(map.center);
     fetch(
       `https://nominatim.openstreetmap.org/reverse?lat=${map.center.lat}&lon=${map.center.lng}&format=json`
     )
@@ -68,6 +67,12 @@ onMounted(() => {
       })
       .then((data) => {
         console.log(data);
+        map.center.address =
+          data.address.road +
+          ", " +
+          data.address.city +
+          ", " +
+          data.address.state;
       });
   });
 
@@ -152,12 +157,27 @@ function updateLocation() {
     />
   </div>
   <div class="center">
-    <input id="address" class="address-input" type="text" />
+    <input
+      id="address"
+      class="address-input"
+      type="text"
+      v-model="map.center.address"
+    />
   </div>
   <div class="center">
     <button class="button lat-long-btn" type="button" @click="updateLocation">
       Go
     </button>
+  </div>
+  <div class="put-incident">
+    <input id="case_number" placeholder="Case #" />
+    <input id="date" type="date" />
+    <input id="time" type="time" />
+    <input id="code" />
+    <input id="incident" />
+    <input id="police_grid" />
+    <input id="neighborhood_number" />
+    <input id="block" />
   </div>
 </template>
 
@@ -219,6 +239,12 @@ function updateLocation() {
 .lat-long-input {
   max-width: 10rem;
   margin: 0.5rem;
+}
+
+.put-incident {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
 }
 
 .address-input {
