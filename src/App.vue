@@ -1,5 +1,6 @@
 <script setup>
 import { reactive, ref, onMounted } from "vue";
+import Modal from "./components/Modal.vue";
 
 let crime_url = ref("");
 let latitude = ref(44.955139);
@@ -148,6 +149,18 @@ function updateLocationAddress() {
       });
   }
 }
+
+// Component state
+let isModalVisible = ref(false);
+
+// Methods
+function showModal() {
+  isModalVisible.value = true;
+}
+
+function closeModal() {
+  isModalVisible.value = false;
+}
 </script>
 
 <template>
@@ -209,16 +222,27 @@ function updateLocationAddress() {
   <div class="center">
     <p id="error-message">Location address outside of bounds</p>
   </div>
-  <div class="put-incident">
-    <input id="case_number" placeholder="Case #" />
-    <input id="date" type="date" />
-    <input id="time" type="time" />
-    <input id="code" />
-    <input id="incident" />
-    <input id="police_grid" />
-    <input id="neighborhood_number" />
-    <input id="block" />
-  </div>
+  <button type="button" class="button" @click="showModal">Open Modal</button>
+
+  <Modal v-show="isModalVisible" @close="closeModal">
+    <template #header>Add Incident</template>
+
+    <template #body>
+      <div class="put-incident">
+        <input id="case_number" placeholder="Case #" />
+        <input id="date" type="date" />
+        <input id="time" type="time" />
+        <input id="code" placeholder="Code" />
+        <input id="incident" placeholder="Incident" />
+        <input id="police_grid" placeholder="Police Grid" />
+        <input id="neighborhood_number" placeholder="Neighborhood #" />
+        <input id="block" placeholder="Block" />
+        <button id="add-btn" class="addbutton">Add</button>
+      </div>
+    </template>
+
+    <template #footer> </template>
+  </Modal>
 </template>
 
 <style>
@@ -289,7 +313,17 @@ function updateLocationAddress() {
 .put-incident {
   display: flex;
   justify-content: center;
+  flex-wrap: wrap;
+  align-items: center;
   margin-top: 1rem;
+  gap: 10px;
+}
+
+.put-incident input {
+  margin: 0.5rem;
+  flex: 1;
+  min-width: 12rem;
+  max-width: 30rem;
 }
 
 .address-input {
@@ -307,5 +341,8 @@ function updateLocationAddress() {
 .dialog-error {
   font-size: 1rem;
   color: #d32323;
+}
+
+.addbutton {
 }
 </style>
