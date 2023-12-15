@@ -92,6 +92,14 @@ function closeDialog() {
     dialog_err.value = true;
   }
 }
+
+// Function called when user presses 'Go' button
+function updateLocation() {
+  if (map.leaflet) {
+    // update the map's center to the new location
+    map.leaflet.setView([map.center.lat, map.center.lng], 14);
+  }
+}
 </script>
 
 <template>
@@ -129,7 +137,9 @@ function closeDialog() {
     />
   </div>
   <div class="center">
-    <button class="lat-long-btn" type="button">Go</button>
+    <button class="button lat-long-btn" type="button" @click="updateLocation">
+      Go
+    </button>
   </div>
 </template>
 
@@ -194,11 +204,10 @@ function closeDialog() {
 }
 
 .lat-long-btn {
-  margin: 0.5rem;
-  padding: 0.5rem 0.8rem;
   border-radius: 0.2rem;
-  color: white;
-  background-color: #1779ba;
+  padding: 0.6rem 0.8rem;
+  font-size: 1.1rem;
+  margin: 0.3rem;
 }
 
 .dialog-error {
