@@ -43,7 +43,7 @@
 }
 
 .modal-footer {
-  padding: 15px;
+  padding-bottom: 1rem;
   display: flex;
 }
 
@@ -61,7 +61,7 @@
 
 .modal-body {
   position: relative;
-  padding: 20px 10px;
+  padding: 1.25rem 0.6rem;
   max-width: 50%;
 }
 
@@ -77,12 +77,24 @@
   font-weight: bold;
   background: transparent;
   color: rgb(185, 6, 6);
-  background-color: lightgray;
+  background-color: rgb(226, 226, 226);
   border-radius: 0.3rem;
 }
 
 .btn-close:hover {
-  background-color: rgb(190, 190, 190);
+  background-color: rgb(203, 203, 203);
+}
+
+.addbtn {
+  background-color: #40d92c;
+  color: black;
+  border-radius: 0.3rem;
+  padding: 0.5rem 0.7rem;
+  cursor: pointer;
+}
+
+.addbtn:hover {
+  background-color: #2c9d1f;
 }
 </style>
 

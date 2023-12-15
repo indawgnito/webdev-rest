@@ -219,10 +219,15 @@ function closeModal() {
       Go
     </button>
   </div>
+  <hr />
   <div class="center">
     <p id="error-message">Location address outside of bounds</p>
   </div>
-  <button type="button" class="button" @click="showModal">Open Modal</button>
+  <div class="center">
+    <button type="button" class="addincident" @click="showModal">
+      Add Incident
+    </button>
+  </div>
 
   <Modal v-show="isModalVisible" @close="closeModal">
     <template #header>Add Incident</template>
@@ -237,11 +242,10 @@ function closeModal() {
         <input id="police_grid" placeholder="Police Grid" />
         <input id="neighborhood_number" placeholder="Neighborhood #" />
         <input id="block" placeholder="Block" />
-        <button id="add-btn" class="addbutton">Add</button>
       </div>
     </template>
 
-    <template #footer> </template>
+    <template #footer><button class="addbtn">Add</button></template>
   </Modal>
 </template>
 
@@ -324,6 +328,13 @@ function closeModal() {
   flex: 1;
   min-width: 12rem;
   max-width: 30rem;
+  padding: 0.5rem;
+  border-radius: 0.2rem;
+  border: 1px solid darkgray;
+}
+
+.put-incident input::placeholder {
+  color: rgb(152, 152, 152);
 }
 
 .address-input {
@@ -343,6 +354,15 @@ function closeModal() {
   color: #d32323;
 }
 
-.addbutton {
+.addincident {
+  background-color: #40d92c;
+  color: black;
+  border-radius: 0.3rem;
+  padding: 0.5rem 0.7rem;
+  cursor: pointer;
+}
+
+.addincident:hover {
+  background-color: #2c9d1f;
 }
 </style>
