@@ -110,39 +110,26 @@ function closeDialog() {
     <button class="button" type="button" @click="closeDialog">OK</button>
   </dialog>
   <div class="grid-container">
-    <br />
-    <div class="grid-x grid-padding-x">
-      <div class="cell large-2 center">
-        <label class="search-label" for="latitude-search">Latitude:</label>
-      </div>
-      <div class="cell large-3 center">
-        <input
-          id="latitude-search"
-          class="search-input"
-          type="number"
-          placeholder="latitude"
-        />
-      </div>
-      <div class="cell large-2 center">
-        <label class="cell large-2 search-label" for="longitude-search"
-          >Longitude:</label
-        >
-      </div>
-      <div class="cell large-3 center">
-        <input
-          id="longitude-search"
-          class="search-input cell large-3"
-          type="number"
-          placeholder="longitude"
-        />
-      </div>
-      <div class="cell large-2 center">
-        <button id="go-btn">GO</button>
-      </div>
-    </div>
     <div class="grid-x grid-padding-x">
       <div id="leafletmap" class="cell auto"></div>
     </div>
+  </div>
+  <div class="lat-long-container">
+    <input
+      id="lat"
+      class="dialog-input lat-long-input"
+      type="number"
+      v-model="map.center.lat"
+    />
+    <input
+      id="lng"
+      class="dialog-input lat-long-input"
+      type="number"
+      v-model="map.center.lng"
+    />
+  </div>
+  <div class="center">
+    <button class="lat-long-btn" type="button">Go</button>
   </div>
 </template>
 
@@ -193,6 +180,25 @@ function closeDialog() {
 .dialog-input {
   font-size: 1rem;
   width: 100%;
+}
+
+.lat-long-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.lat-long-input {
+  max-width: 10rem;
+  margin: 0.5rem;
+}
+
+.lat-long-btn {
+  margin: 0.5rem;
+  padding: 0.5rem 0.8rem;
+  border-radius: 0.2rem;
+  color: white;
+  background-color: #1779ba;
 }
 
 .dialog-error {
