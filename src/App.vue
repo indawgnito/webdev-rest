@@ -56,6 +56,11 @@ onMounted(() => {
     [45.008206, -92.993787],
   ]);
 
+  map.leaflet.on("moveend", () => {
+    map.center.lat = map.leaflet.getCenter().lat;
+    map.center.lng = map.leaflet.getCenter().lng;
+  });
+
   // Get boundaries for St. Paul neighborhoods
   let district_boundary = new L.geoJson();
   district_boundary.addTo(map.leaflet);
