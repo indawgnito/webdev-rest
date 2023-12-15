@@ -59,6 +59,16 @@ onMounted(() => {
   map.leaflet.on("moveend", () => {
     map.center.lat = map.leaflet.getCenter().lat;
     map.center.lng = map.leaflet.getCenter().lng;
+    console.log(map.center);
+    fetch(
+      `https://nominatim.openstreetmap.org/reverse?lat=${map.center.lat}&lon=${map.center.lng}&format=json`
+    )
+      .then((result) => {
+        return result.json();
+      })
+      .then((data) => {
+        console.log(data);
+      });
   });
 
   // Get boundaries for St. Paul neighborhoods
@@ -142,6 +152,9 @@ function updateLocation() {
     />
   </div>
   <div class="center">
+    <input id="address" class="address-input" type="text" />
+  </div>
+  <div class="center">
     <button class="button lat-long-btn" type="button" @click="updateLocation">
       Go
     </button>
@@ -205,6 +218,11 @@ function updateLocation() {
 
 .lat-long-input {
   max-width: 10rem;
+  margin: 0.5rem;
+}
+
+.address-input {
+  max-width: 20rem;
   margin: 0.5rem;
 }
 
