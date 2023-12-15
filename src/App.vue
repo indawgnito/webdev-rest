@@ -66,7 +66,7 @@ onMounted(() => {
         return result.json();
       })
       .then((data) => {
-        console.log(data);
+        // console.log(data);
         map.center.address =
           data.address.road +
           ", " +
@@ -89,7 +89,7 @@ onMounted(() => {
       });
     })
     .catch((error) => {
-      console.log("Error:", error);
+      //   console.log("Error:", error);
     });
 });
 
@@ -114,10 +114,38 @@ function closeDialog() {
 }
 
 // Function called when user presses 'Go' button
-function updateLocation() {
+function updateLocationLatLong() {
   if (map.leaflet) {
     // update the map's center to the new location
     map.leaflet.setView([map.center.lat, map.center.lng], 14);
+    console.log(typeof map.center.lat);
+  }
+}
+
+function updateLocationAddress() {
+  if (map.leaflet) {
+    fetch(
+      `https://nominatim.openstreetmap.org/search?q=${map.center.address}&format=json&limit=1`
+    )
+      .then((result) => {
+        return result.json();
+      })
+      .then((data) => {
+        let location = data[0];
+        if (
+          location.lat > 44.883658 &&
+          location.lat < 45.008206 &&
+          location.lon > -93.217977 &&
+          location.lon < -92.993787
+        ) {
+          map.leaflet.setView([location.lat, location.lon], 14);
+        } else {
+          document.getElementById("error-message").style.display = "block";
+          setTimeout(() => {
+            document.getElementById("error-message").style.display = "none";
+          }, 3000);
+        }
+      });
   }
 }
 </script>
@@ -155,6 +183,13 @@ function updateLocation() {
       type="number"
       v-model="map.center.lng"
     />
+    <button
+      class="button lat-long-btn"
+      type="button"
+      @click="updateLocationLatLong"
+    >
+      Go
+    </button>
   </div>
   <div class="center">
     <input
@@ -163,11 +198,16 @@ function updateLocation() {
       type="text"
       v-model="map.center.address"
     />
-  </div>
-  <div class="center">
-    <button class="button lat-long-btn" type="button" @click="updateLocation">
+    <button
+      class="button lat-long-btn"
+      type="button"
+      @click="updateLocationAddress"
+    >
       Go
     </button>
+  </div>
+  <div class="center">
+    <p id="error-message">Location address outside of bounds</p>
   </div>
   <div class="put-incident">
     <input id="case_number" placeholder="Case #" />
@@ -199,6 +239,11 @@ function updateLocation() {
   width: 10em;
   height: 2em;
   border-radius: 2em;
+}
+
+#error-message {
+  display: none;
+  color: red;
 }
 
 .center {
