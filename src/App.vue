@@ -150,10 +150,44 @@ function updateLocationAddress() {
   }
 }
 
-// Component state
+function submitIncident() {
+  let case_number = document.getElementById("case_number").value;
+  let date = document.getElementById("date").value;
+  let time = document.getElementById("time").value;
+  let code = document.getElementById("code").value;
+  let incident = document.getElementById("incident").value;
+  let police_grid = document.getElementById("police_grid").value;
+  let neighborhood_number = document.getElementById(
+    "neighborhood_number"
+  ).value;
+  let block = document.getElementById("block").value;
+
+  let incident_data = {
+    case_number: case_number,
+    date: date,
+    time: time + ":00",
+    code: code,
+    incident: incident,
+    police_grid: police_grid,
+    neighborhood_number: neighborhood_number,
+    block: block,
+  };
+  console.log(incident_data);
+  console.log(crime_url.value + "/new-incident");
+
+  fetch(crime_url.value + "/new-incident", {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(incident_data),
+  }).then((response) => {
+    return response.text();
+  });
+}
+
 let isModalVisible = ref(false);
 
-// Methods
 function showModal() {
   isModalVisible.value = true;
 }
@@ -230,22 +264,25 @@ function closeModal() {
   </div>
 
   <Modal v-show="isModalVisible" @close="closeModal">
-    <template #header>Add Incident</template>
+    <template #header
+      ><p>Add Incident</p>
+      <p>test</p></template
+    >
 
     <template #body>
-      <div class="put-incident">
-        <input id="case_number" placeholder="Case #" />
-        <input id="date" type="date" />
-        <input id="time" type="time" />
-        <input id="code" placeholder="Code" />
-        <input id="incident" placeholder="Incident" />
-        <input id="police_grid" placeholder="Police Grid" />
-        <input id="neighborhood_number" placeholder="Neighborhood #" />
-        <input id="block" placeholder="Block" />
-      </div>
+      <form class="put-incident" @submit.prevent="submitIncident">
+        <input id="case_number" placeholder="Case #" required />
+        <input id="date" type="date" required />
+        <input id="time" type="time" required />
+        <input id="code" placeholder="Code" required />
+        <input id="incident" placeholder="Incident" required />
+        <input id="police_grid" placeholder="Police Grid" required />
+        <input id="neighborhood_number" placeholder="Neighborhood #" required />
+        <input id="block" placeholder="Block" required />
+        <!-- On click event, make PUT request to api-->
+        <button class="addbtn" type="submit">Add</button>
+      </form>
     </template>
-
-    <template #footer><button class="addbtn">Add</button></template>
   </Modal>
 </template>
 

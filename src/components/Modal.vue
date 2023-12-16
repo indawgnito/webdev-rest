@@ -9,10 +9,6 @@
       <section class="modal-body">
         <slot name="body"></slot>
       </section>
-
-      <footer class="modal-footer">
-        <slot name="footer"></slot>
-      </footer>
     </div>
   </div>
 </template>
@@ -40,11 +36,7 @@
   flex-direction: column;
   border-radius: 0.5rem;
   max-width: 50%;
-}
-
-.modal-footer {
-  padding-bottom: 1rem;
-  display: flex;
+  max-height: 50%;
 }
 
 .modal-header {
@@ -52,11 +44,9 @@
   border-bottom: 1px solid #eeeeee;
   font-weight: bold;
   padding: 0.4rem 1rem;
-}
-
-.modal-footer {
+  display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+  align-items: center;
 }
 
 .modal-body {

@@ -277,7 +277,7 @@ app.get("/incidents", (req, res) => {
     }
   }
 
-  sql+= ` ORDER BY date_time DESC`;
+  sql += ` ORDER BY date_time DESC`;
 
   if (req.query.limit) {
     sql += ` LIMIT ${req.query.limit}`;
@@ -301,7 +301,6 @@ app.get("/incidents", (req, res) => {
 
       // now that there is the date and time properties, sort by date.
       // this should work because of the existing datetime format
-    
 
       // only grab items after start date, if there is one
       if (req.query.start_date) {
@@ -357,12 +356,12 @@ app.put("/new-incident", (req, res) => {
       res.status(200).type("txt").send("OK");
     })
     .catch((error) => {
+      console.log(error);
       res.status(500).type("txt").send(error);
     });
 
   // res.status(200).type("txt").send("OK"); // <-- you may need to change this
 });
-
 
 // DELETE request handler for new crime incident
 app.delete("/remove-incident", (req, res) => {
@@ -379,10 +378,13 @@ app.delete("/remove-incident", (req, res) => {
     })
     .then(() => {
       console.log(`${caseNumber} has been deleted`);
-      res.status(200).type("txt").send(`Case number ${caseNumber} has been deleted.`);
+      res
+        .status(200)
+        .type("txt")
+        .send(`Case number ${caseNumber} has been deleted.`);
     })
     .catch((error) => {
-      console.error(error.message)
+      console.error(error.message);
       res.status(500).type("txt").send(error.message);
     });
 });
