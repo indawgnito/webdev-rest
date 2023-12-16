@@ -105,6 +105,29 @@ onMounted(() => {
 function initializeCrimes() {
   // TODO: get code and neighborhood data
   //       get initial 1000 crimes
+
+  // find number of crimes in each neighborhood and
+  // add to marker popups with
+  let promises = [];
+  // running in parallel
+  for (let i = 0; i < map.neighborhood_markers.length; i++) {
+    promises.push(
+      fetch(`${crime_url.value}/incidents?neighborhood=${i + 1}&limit=100000`)
+        .then((result) => {
+          return result.json();
+        })
+        .then((data) => {
+          console.log(data);
+          map.neighborhood_markers[i].marker.bindPopup(
+            `Neighborhood ${i + 1}: ${data.length} crimes committed`
+          );
+        })
+    );
+  }
+
+  Promise.all(promises).then(() => {
+    console.log("done");
+  });
 }
 
 // Function called when user presses 'OK' on dialog box
