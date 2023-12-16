@@ -2,6 +2,7 @@
 import { reactive, ref, onMounted } from "vue";
 import Modal from "./components/Modal.vue";
 
+let crimes = ref([]);
 let crime_url = ref("");
 let latitude = ref(44.955139);
 let longitude = ref(-93.102222);
@@ -128,6 +129,15 @@ function initializeCrimes() {
   Promise.all(promises).then(() => {
     console.log("done");
   });
+
+  // once all those are covered, request the initial 1000 crimes
+  fetch(`${crime_url.value}/incidents?limit=1000`)
+    .then((result) => {
+      return result.json();
+    })
+    .then((data) => {
+      crimes.value = data;
+    });
 }
 
 // Function called when user presses 'OK' on dialog box
@@ -290,6 +300,36 @@ function closeModal() {
     <button type="button" class="addincident" @click="showModal">
       Add Incident
     </button>
+  </div>
+  <br />
+
+  <div class="center">
+    <table>
+      <thead>
+        <tr>
+          <th>Case #</th>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Code</th>
+          <th>Incident</th>
+          <th>Police Grid</th>
+          <th>Neighborhood #</th>
+          <th>Block</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="crime in crimes" :key="crime.case_number">
+          <td>{{ crime.case_number }}</td>
+          <td>{{ crime.date }}</td>
+          <td>{{ crime.time }}</td>
+          <td>{{ crime.code }}</td>
+          <td>{{ crime.incident }}</td>
+          <td>{{ crime.police_grid }}</td>
+          <td>{{ crime.neighborhood_number }}</td>
+          <td>{{ crime.block }}</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 
   <Modal v-show="isModalVisible" @close="closeModal">
