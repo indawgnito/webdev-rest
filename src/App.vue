@@ -88,6 +88,12 @@ onMounted(() => {
       result.features.forEach((value) => {
         district_boundary.addData(value);
       });
+
+      for (let i = 0; i < map.neighborhood_markers.length; i++) {
+        map.neighborhood_markers[i].marker = L.marker(
+          map.neighborhood_markers[i].location
+        ).addTo(map.leaflet);
+      }
     })
     .catch((error) => {
       //   console.log("Error:", error);
