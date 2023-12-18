@@ -275,6 +275,49 @@ function deleteIncident(number) {
     return response.text();
   });
 }
+
+let selectedIncidents = ref([]);
+let incidents = ref([
+  {id: 1, label: "Homicide"},
+  {id: 2, label: "Rape"},
+  {id: 3, label: "Robbery"},
+  {id: 4, label: "Aggravated Assault"},
+  {id: 5, label: "Burglary"},
+  {id: 6, label: "Theft"},
+  {id: 7, label: "Auto Theft"},
+  {id: 8, label: "Arson"},
+  {id: 9, label: "Domestic Assaults"},
+  {id: 10, label: "Vandalism"},
+  {id: 11, label: "Narcotics"},
+  {id: 12, label: "Firearm Discharges"},
+  {id: 13, label: "Proactive Police Visit"},
+  {id: 14, label: "Other"}
+]);
+
+let selectedNeighborhoods = ref([]);
+let neighborhoods = ref([
+  {id: 1, label: "Saint Anthony Park"},
+  {id: 2, label: "Como Park"},
+  {id: 3, label: "Hamline-Midway"},
+  {id: 4, label: "Union Park"},
+  {id: 5, label: "Macalester-Groveland"},
+  {id: 6, label: "Highland"},
+  {id: 7, label: "North End"},
+  {id: 8, label: "Frogtown"},
+  {id: 9, label: "Summit University"},
+  {id: 10, label: "Summit Hill"},
+  {id: 11, label: "West Seventh"},
+  {id: 12, label: "West Side"},
+  {id: 13, label: "Downtown"},
+  {id: 14, label: "Payne-Phalen"},
+  {id: 15, label: "Dayton's Bluff"},
+  {id: 16, label: "Greater East Side"},
+  {id: 17, label: "Southeast"}
+]);
+
+function filteredCrimes() {
+  
+}
 </script>
 
 <template>
@@ -286,7 +329,7 @@ function deleteIncident(number) {
       class="dialog-input"
       type="url"
       v-model="crime_url"
-      placeholder="http://localhost:8000"
+      placeholder="http://localhost:5173"
     />
     <p class="dialog-error" v-if="dialog_err">Error: must enter valid URL</p>
     <br />
@@ -373,6 +416,27 @@ function deleteIncident(number) {
   </div>
 
   <br />
+  <h3 style="display: flex; align-items: center; text-align: center; justify-content: center">Filter Crime</h3>
+  <div id = "app">
+    <p style="margin: 2em">Incidents:</p>
+    <div style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; margin: 2em; font-size: 0.8rem;">
+    <div v-for="(item, index) in incidents" :key="index" style="margin-right: 2em; margin-bottom: 2em;">
+    <input type="checkbox" v-model="selectedIncidents" :value="item.id">
+    {{ item.label }}
+    </div>
+    </div>
+    <p>Selected Items: {{ selectedIncidents }}</p>
+  </div>
+
+  <div id = "app">
+    <p style="margin: 2em">Neighborhoods:</p>
+    <div style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; margin: 2em; font-size: 0.8rem;">
+    <div v-for="(item, index) in neighborhoods" :key="index" style="margin-right: 2em; margin-bottom: 2em;">
+    <input type="checkbox" v-model="selectedNeighborhoods" :value="item.id">
+    {{ item.label }}
+    </div>
+    </div>
+  </div>
 
   <div class="center">
     <table>
