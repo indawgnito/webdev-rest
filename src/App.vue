@@ -111,6 +111,7 @@ function initializeCrimes() {
   // add to marker popups with
   let promises = [];
   // running in parallel
+  console.log(crime_url.value);
   for (let i = 0; i < map.neighborhood_markers.length; i++) {
     promises.push(
       fetch(`${crime_url.value}/incidents?neighborhood=${i + 1}&limit=100000`)
@@ -158,7 +159,6 @@ function updateLocationLatLong() {
   if (map.leaflet) {
     // update the map's center to the new location
     map.leaflet.setView([map.center.lat, map.center.lng], 14);
-    console.log(typeof map.center.lat);
   }
 }
 
@@ -234,6 +234,47 @@ function showModal() {
 function closeModal() {
   isModalVisible.value = false;
 }
+
+function getCrimeColor(status) {
+  console.log(status);
+  if (
+    status === "Agg. Assault" ||
+    status === "Agg. Assault Dom." ||
+    status === "Simple Assault Dom." ||
+    status === "Rape"
+  ) {
+    return "violent-crime";
+  } else if (
+    status === "Theft" ||
+    status === "Auto Theft" ||
+    status === "Burglary" ||
+    status === "Criminal Damage" ||
+    status === "Robbery"
+  ) {
+    return "property-crime";
+  } else if (status === "Narcotics") {
+    return "drug-use-crime";
+  } else {
+    return "";
+  }
+}
+
+function deleteIncident(number) {
+  let deletion = {
+    case_number: number,
+  };
+  console.log(JSON.stringify(deletion));
+
+  fetch(crime_url.value + "/remove-incident", {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(deletion),
+  }).then((response) => {
+    return response.text();
+  });
+}
 </script>
 
 <template>
@@ -303,6 +344,36 @@ function closeModal() {
   </div>
   <br />
 
+  <div
+    class="center"
+    style="display: flex; flex-direction: column; align-items: center"
+  >
+    <h1 style="text-align: center">Crime Color Legend</h1>
+    <div style="display: flex; align-items: center; width: 20em">
+      <p style="margin: auto">Narcotics:</p>
+      <div
+        class="colored-square"
+        style="background-color: #4d79ff; margin-left: 2em"
+      ></div>
+    </div>
+    <div style="display: flex; align-items: center; width: 20em">
+      <p style="margin: auto">Property Crimes:</p>
+      <div
+        class="colored-square"
+        style="background-color: #ffff66; margin-left: 2em"
+      ></div>
+    </div>
+    <div style="display: flex; align-items: center; width: 20em">
+      <p style="margin: auto">Violent Crimes:</p>
+      <div
+        class="colored-square"
+        style="background-color: #d32323; margin-left: 2em"
+      ></div>
+    </div>
+  </div>
+
+  <br />
+
   <div class="center">
     <table>
       <thead>
@@ -315,10 +386,15 @@ function closeModal() {
           <th>Police Grid</th>
           <th>Neighborhood #</th>
           <th>Block</th>
+          <th>Delete Row</th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="crime in crimes" :key="crime.case_number">
+        <tr
+          v-for="crime in crimes"
+          :key="crime.case_number"
+          :class="getCrimeColor(crime.incident)"
+        >
           <td>{{ crime.case_number }}</td>
           <td>{{ crime.date }}</td>
           <td>{{ crime.time }}</td>
@@ -327,6 +403,14 @@ function closeModal() {
           <td>{{ crime.police_grid }}</td>
           <td>{{ crime.neighborhood_number }}</td>
           <td>{{ crime.block }}</td>
+          <td class="center">
+            <button
+              class="delete-btn"
+              @click="deleteIncident(crime.case_number)"
+            >
+              X
+            </button>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -470,5 +554,39 @@ function closeModal() {
 
 .addincident:hover {
   background-color: #2c9d1f;
+}
+
+.violent-crime {
+  background-color: #d32323;
+}
+
+.property-crime {
+  background-color: #ffff66;
+}
+
+.drug-use-crime {
+  background-color: #4d79ff;
+}
+
+.center-text {
+  text-align: center;
+}
+
+.colored-square {
+  height: 2rem;
+  width: 2rem;
+}
+
+.delete-btn {
+  background-color: #d32323;
+  color: #ffff;
+  width: 2em;
+  height: 2em;
+  border-radius: 2em;
+}
+
+.delete-btn:hover {
+  background-color: #000;
+  color: #d32323;
 }
 </style>

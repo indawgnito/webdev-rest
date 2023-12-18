@@ -10,7 +10,14 @@ const db_filename = path.join(__dirname, "db", "stpaul_crime.sqlite3");
 const port = 8000;
 
 let app = express();
-app.use(express.json());
+// app.use(express.json());
+
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "http://127.0.0.1:5173");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+  res.header("Access-Control-Allow-Headers", "*");
+  next();
+});
 
 /********************************************************************
  ***   DATABASE FUNCTIONS                                         ***
