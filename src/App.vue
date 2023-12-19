@@ -460,7 +460,6 @@ function filteredCrimes() {}
         {{ item.label }}
       </div>
     </div>
-    <p>Selected Items: {{ selectedIncidents }}</p>
   </div>
 
   <div id="app">
@@ -489,6 +488,19 @@ function filteredCrimes() {}
       </div>
     </div>
   </div>
+
+    <!-- Max Incidents Search -->
+<div style="margin: 2em;">
+  <label>Max Incidents:</label>
+    <input type="number" v-model="maxIncidents" />
+
+  <!-- Date Range Search -->
+  <label>Start Date:</label>
+  <input type="date" v-model="startDate" />
+  <label>End Date:</label>
+  <input type="date" v-model="endDate" />
+</div>
+
 
   <div class="center">
     <table>
