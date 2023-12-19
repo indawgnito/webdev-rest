@@ -8,32 +8,109 @@
     <link rel="stylesheet" href="css/foundation.css">
     <!-- Custom Style -->
     <link rel="stylesheet" href="css/style.css"/>
-</head>
-<body>
-    <!-- <div class="off-canvas-content" data-off-canvas-content> -->
-        <div class = "grid-container" style="margin: 2em;">
-            <div class = "grid-x" style="display: flex; align-items: center; text-align: center; justify-content: center;"><h1>About the Project</h1></div>
-    <p>Team Members: </p>
-    <ul>
-        <li>Joshua Kahlbaugh</li>
-        <p>Bio and pic:</p>
-        <li>Parker Grant</li>
-        <p>Bio and pic:</p>
-        <li>Ben Webb</li>
-        <p>Bio and pic:</p>
-    </ul>
-    <p>Description of tools:</p>
-    <p>Video Demo: </p>
-    <p>Six Interesting Findings from application</p>
-    <li>One:</li>
-    <li>Two:</li>
-    <li>Three:</li>
-    <li>Four:</li>
-    <li>Five:</li>
-    <li>Six:</li>
-        </div>
-  <!-- </div> -->
-    <!-- Foundation CSS Framework: include before closing <body> tag -->
+    <style>
+        body {
+          font-family: 'Arial', sans-serif;
+          background-color: #f4f4f4;
+          color: #333;
+        }
+    
+        .grid-container {
+          margin: 2em;
+        }
+    
+        .h1-box {
+          font-size: 1em;
+          text-align: center;
+          margin-bottom: 2em;
+          /* Box styling with rounded edges and drop shadow */
+          background-color: #fff;
+          padding: .5em .5em;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          border-radius: 8px; /* Rounded edges */
+          max-width: 15em;
+          margin: 0 auto;
+        }
+        .team-member-box {
+          font-size: 1em;
+          /* Box styling with rounded edges and drop shadow */
+          background-color: #fff;
+          padding: .5em 1em;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          border-radius: 8px; /* Rounded edges */
+          margin: 3em;
+        }
+    
+        ul {
+          list-style-type: none;
+          padding: 0;
+        }
+    
+        li {
+          margin-bottom: 0.5em;
+        }
+    
+        p {
+          margin-bottom: 1em;
+        }
+    
+        /* Additional styling */
+        p.bio {
+          font-style: italic;
+          color: #555;
+        }
+    
+        img {
+          max-width: 100%;
+          height: auto;
+          border-radius: 5px;
+          margin-bottom: 0.5em;
+        }
+      </style>
+      <title>About the Project</title>
+    </head>
+    <body>
+    
+    <div class="grid-container">
+      <div class="grid-x align-center">
+        <h1 class="h1-box" style="font-size: 2rem; text-align: center;">About the Project</h1>
+      </div>
+    
+      <ul>
+        <li>
+          <ul>
+            <li class="team-member-box">
+              Joshua Kahlbaugh
+              <p class="bio">Bio and pic:</p>
+            </li>
+            <li class="team-member-box">
+              Parker Grant
+              <p class="bio">Bio and pic:</p>
+            </li>
+            <li class="team-member-box">
+              Ben Webb
+              <p class="bio">Bio and pic:</p>
+            </li>
+          </ul>
+        </li>
+      </ul>
+        <p class="team-member-box">Description of tools:</p>
+    
+        <p class="team-member-box">Video Demo: </p>
+    
+          <ul class="team-member-box"> Six Interesting Findings from the application:
+            <li></li>
+            <li>One:</li>
+            <li>Two:</li>
+            <li>Three:</li>
+            <li>Four:</li>
+            <li>Five:</li>
+            <li>Six:</li>
+          </ul>
+      </ul>
+    </div>
+
+  <!-- Foundation CSS Framework: include before closing <body> tag -->
     <script src="js/vendor/jquery.js"></script>
     <script src="js/vendor/what-input.js"></script>
     <script src="js/vendor/foundation.js"></script>
