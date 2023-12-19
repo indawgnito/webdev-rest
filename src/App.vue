@@ -127,18 +127,20 @@ function initializeCrimes() {
     );
   }
 
-  Promise.all(promises).then(() => {
-    console.log("done");
-  });
-
-  // once all those are covered, request the initial 1000 crimes
-  fetch(`${crime_url.value}/incidents?limit=1000`)
+  // create a promise to request the 1000 most recent
+  const crimePromise = fetch(`${crime_url.value}/incidents?limit=1000`)
     .then((result) => {
       return result.json();
     })
     .then((data) => {
       crimes.value = data;
     });
+
+  promises.push(crimePromise);
+
+  Promise.all(promises).then(() => {
+    console.log("done");
+  });
 }
 
 // Function called when user presses 'OK' on dialog box
@@ -211,8 +213,6 @@ function submitIncident() {
     neighborhood_number: neighborhood_number,
     block: block,
   };
-  console.log(incident_data);
-  console.log(crime_url.value + "/new-incident");
 
   fetch(crime_url.value + "/new-incident", {
     method: "PUT",
@@ -221,7 +221,25 @@ function submitIncident() {
     },
     body: JSON.stringify(incident_data),
   }).then((response) => {
-    return response.text();
+    console.log(response.status);
+    if (response.status === 200) {
+      console.log("added");
+
+      //close popup
+      closeModal();
+
+      // reload first 1000 crimes
+      fetch(`${crime_url.value}/incidents?limit=1000`)
+        .then((result) => {
+          return result.json();
+        })
+        .then((data) => {
+          crimes.value = data;
+        });
+
+      // reload markers
+      initializeCrimes();
+    }
   });
 }
 
@@ -236,7 +254,6 @@ function closeModal() {
 }
 
 function getCrimeColor(status) {
-  console.log(status);
   if (
     status === "Agg. Assault" ||
     status === "Agg. Assault Dom." ||
@@ -545,10 +562,7 @@ function filteredCrimes() {}
   </div>
 
   <Modal v-show="isModalVisible" @close="closeModal">
-    <template #header
-      ><p>Add Incident</p>
-      <p>test</p></template
-    >
+    <template #header><p>Add Incident</p></template>
 
     <template #body>
       <form class="put-incident" @submit.prevent="submitIncident">
