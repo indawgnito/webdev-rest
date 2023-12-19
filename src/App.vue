@@ -272,52 +272,65 @@ function deleteIncident(number) {
     },
     body: JSON.stringify(deletion),
   }).then((response) => {
-    return response.text();
+    console.log(response.status);
+    if (response.status === 200) {
+      console.log("deleted");
+      // find index of item to be deleted in ref list
+      let crimeIndex;
+
+      for (let i = 0; i < crimes.value.length; i++) {
+        if (crimes.value[i].case_number === number) {
+          crimeIndex = i;
+          break;
+        }
+      }
+
+      // remove 1 item from list starting at crimeIndex
+      crimes.value.splice(crimeIndex, 1);
+    }
   });
 }
 
 let selectedIncidents = ref([]);
 let incidents = ref([
-  {id: 1, label: "Homicide"},
-  {id: 2, label: "Rape"},
-  {id: 3, label: "Robbery"},
-  {id: 4, label: "Aggravated Assault"},
-  {id: 5, label: "Burglary"},
-  {id: 6, label: "Theft"},
-  {id: 7, label: "Auto Theft"},
-  {id: 8, label: "Arson"},
-  {id: 9, label: "Domestic Assaults"},
-  {id: 10, label: "Vandalism"},
-  {id: 11, label: "Narcotics"},
-  {id: 12, label: "Firearm Discharges"},
-  {id: 13, label: "Proactive Police Visit"},
-  {id: 14, label: "Other"}
+  { id: 1, label: "Homicide" },
+  { id: 2, label: "Rape" },
+  { id: 3, label: "Robbery" },
+  { id: 4, label: "Aggravated Assault" },
+  { id: 5, label: "Burglary" },
+  { id: 6, label: "Theft" },
+  { id: 7, label: "Auto Theft" },
+  { id: 8, label: "Arson" },
+  { id: 9, label: "Domestic Assaults" },
+  { id: 10, label: "Vandalism" },
+  { id: 11, label: "Narcotics" },
+  { id: 12, label: "Firearm Discharges" },
+  { id: 13, label: "Proactive Police Visit" },
+  { id: 14, label: "Other" },
 ]);
 
 let selectedNeighborhoods = ref([]);
 let neighborhoods = ref([
-  {id: 1, label: "Saint Anthony Park"},
-  {id: 2, label: "Como Park"},
-  {id: 3, label: "Hamline-Midway"},
-  {id: 4, label: "Union Park"},
-  {id: 5, label: "Macalester-Groveland"},
-  {id: 6, label: "Highland"},
-  {id: 7, label: "North End"},
-  {id: 8, label: "Frogtown"},
-  {id: 9, label: "Summit University"},
-  {id: 10, label: "Summit Hill"},
-  {id: 11, label: "West Seventh"},
-  {id: 12, label: "West Side"},
-  {id: 13, label: "Downtown"},
-  {id: 14, label: "Payne-Phalen"},
-  {id: 15, label: "Dayton's Bluff"},
-  {id: 16, label: "Greater East Side"},
-  {id: 17, label: "Southeast"}
+  { id: 1, label: "Saint Anthony Park" },
+  { id: 2, label: "Como Park" },
+  { id: 3, label: "Hamline-Midway" },
+  { id: 4, label: "Union Park" },
+  { id: 5, label: "Macalester-Groveland" },
+  { id: 6, label: "Highland" },
+  { id: 7, label: "North End" },
+  { id: 8, label: "Frogtown" },
+  { id: 9, label: "Summit University" },
+  { id: 10, label: "Summit Hill" },
+  { id: 11, label: "West Seventh" },
+  { id: 12, label: "West Side" },
+  { id: 13, label: "Downtown" },
+  { id: 14, label: "Payne-Phalen" },
+  { id: 15, label: "Dayton's Bluff" },
+  { id: 16, label: "Greater East Side" },
+  { id: 17, label: "Southeast" },
 ]);
 
-function filteredCrimes() {
-  
-}
+function filteredCrimes() {}
 </script>
 
 <template>
@@ -416,25 +429,64 @@ function filteredCrimes() {
   </div>
 
   <br />
-  <h3 style="display: flex; align-items: center; text-align: center; justify-content: center">Filter Crime</h3>
-  <div id = "app">
+  <h3
+    style="
+      display: flex;
+      align-items: center;
+      text-align: center;
+      justify-content: center;
+    "
+  >
+    Filter Crime
+  </h3>
+  <div id="app">
     <p style="margin: 2em">Incidents:</p>
-    <div style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; margin: 2em; font-size: 0.8rem;">
-    <div v-for="(item, index) in incidents" :key="index" style="margin-right: 2em; margin-bottom: 2em;">
-    <input type="checkbox" v-model="selectedIncidents" :value="item.id">
-    {{ item.label }}
-    </div>
+    <div
+      style="
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        margin: 2em;
+        font-size: 0.8rem;
+      "
+    >
+      <div
+        v-for="(item, index) in incidents"
+        :key="index"
+        style="margin-right: 2em; margin-bottom: 2em"
+      >
+        <input type="checkbox" v-model="selectedIncidents" :value="item.id" />
+        {{ item.label }}
+      </div>
     </div>
     <p>Selected Items: {{ selectedIncidents }}</p>
   </div>
 
-  <div id = "app">
+  <div id="app">
     <p style="margin: 2em">Neighborhoods:</p>
-    <div style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; margin: 2em; font-size: 0.8rem;">
-    <div v-for="(item, index) in neighborhoods" :key="index" style="margin-right: 2em; margin-bottom: 2em;">
-    <input type="checkbox" v-model="selectedNeighborhoods" :value="item.id">
-    {{ item.label }}
-    </div>
+    <div
+      style="
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        margin: 2em;
+        font-size: 0.8rem;
+      "
+    >
+      <div
+        v-for="(item, index) in neighborhoods"
+        :key="index"
+        style="margin-right: 2em; margin-bottom: 2em"
+      >
+        <input
+          type="checkbox"
+          v-model="selectedNeighborhoods"
+          :value="item.id"
+        />
+        {{ item.label }}
+      </div>
     </div>
   </div>
 

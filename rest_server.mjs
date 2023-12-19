@@ -10,7 +10,7 @@ const db_filename = path.join(__dirname, "db", "stpaul_crime.sqlite3");
 const port = 8000;
 
 let app = express();
-// app.use(express.json());
+app.use(express.json());
 
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "http://localhost:5173");
@@ -374,7 +374,10 @@ app.put("/new-incident", (req, res) => {
 app.delete("/remove-incident", (req, res) => {
   const incident = "SELECT * FROM Incidents WHERE case_number = ?";
   const deleteQ = "DELETE FROM Incidents WHERE case_number = ?";
-  const caseNumber = parseInt(req.body.case_number);
+
+  // get case number
+  const caseNumber = req.body.case_number;
+
   dbSelect(incident, [caseNumber])
     .then((rows) => {
       if (rows.length === 0) {
