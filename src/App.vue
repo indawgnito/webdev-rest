@@ -7,6 +7,17 @@ let crime_url = ref("");
 let latitude = ref(44.955139);
 let longitude = ref(-93.102222);
 let dialog_err = ref(false);
+// selected crime will update when users click on a row
+let selected_crime = reactive({
+  case_number: "",
+  date: "",
+  time: "",
+  code: "",
+  incident: "",
+  police_grid: "",
+  neighborhood_number: "",
+  block: "",
+});
 let map = reactive({
   leaflet: null,
   center: {
@@ -348,6 +359,89 @@ let neighborhoods = ref([
 ]);
 
 function filteredCrimes() {}
+
+function updateSelectedCrime(crime) {
+  // handle deselection
+  if (isSelectedCrime(crime)) {
+    selected_crime.case_number = "";
+    selected_crime.date = "";
+    selected_crime.time = "";
+    selected_crime.code = "";
+    selected_crime.incident = "";
+    selected_crime.police_grid = "";
+    selected_crime.neighborhood_number = "";
+    selected_crime.block = "";
+    return;
+  }
+
+  selected_crime.case_number = crime.case_number;
+  selected_crime.date = crime.date;
+  selected_crime.time = crime.time;
+  selected_crime.code = crime.code;
+  selected_crime.incident = crime.incident;
+  selected_crime.police_grid = crime.police_grid;
+  selected_crime.neighborhood_number = crime.neighborhood_number;
+  selected_crime.block = crime.block;
+
+  // place a marker on the map at the crime's location
+  // use cleaned address
+  let address = removeXs(crime.block);
+
+  let full_address = address + ", Saint Paul, Minnesota";
+  console.log(map.center.address);
+  console.log(full_address);
+
+  fetch(
+    `https://nominatim.openstreetmap.org/search?q=${full_address}&format=json&limit=1`
+  )
+    .then((result) => {
+      console.log("RECEIVED RESPONSE");
+      return result.json();
+    })
+    .then((data) => {
+      console.log("TEST");
+      console.log(data);
+
+      // define red icon
+      // I chose that icon size cuz those are half the dimensions of the img
+      // and the img is 50x82
+      // the anchor is just half of the width and the full height, so that the
+      // bottom point of the icon lines up with the location it represents
+      let redIcon = L.icon({
+        iconUrl:
+          "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png",
+        shadowUrl:
+          "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-shadow.png",
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+      });
+
+      let marker = L.marker([data[0].lat, data[0].lon], {
+        icon: redIcon,
+      }).addTo(map.leaflet);
+      marker.bindPopup(
+        `<b>Case Number:</b> ${crime.case_number}<br><b>Date:</b> ${crime.date}<br><b>Time:</b> ${crime.time}<br><b>Code:</b> ${crime.code}<br><b>Incident:</b> ${crime.incident}<br><b>Police Grid:</b> ${crime.police_grid}<br><b>Neighborhood Number:</b> ${crime.neighborhood_number}<br><b>Block:</b> ${crime.block}`
+      );
+    });
+}
+
+function isSelectedCrime(crime) {
+  return selected_crime.case_number === crime.case_number;
+}
+
+function removeXs(str) {
+  // replace X's in the address number with zeroes
+  // address number is first item in address, followed by zero
+
+  // split into individual items
+  let address = str.split(" ");
+
+  // replace X's in address number with zeroes
+  address[0] = address[0].replace(/X/g, "0");
+
+  // join back into string
+  return address.join(" ");
+}
 </script>
 
 <template>
@@ -506,18 +600,17 @@ function filteredCrimes() {}
     </div>
   </div>
 
-    <!-- Max Incidents Search -->
-<div style="margin: 2em;">
-  <label>Max Incidents:</label>
+  <!-- Max Incidents Search -->
+  <div style="margin: 2em">
+    <label>Max Incidents:</label>
     <input type="number" v-model="maxIncidents" />
 
-  <!-- Date Range Search -->
-  <label>Start Date:</label>
-  <input type="date" v-model="startDate" />
-  <label>End Date:</label>
-  <input type="date" v-model="endDate" />
-</div>
-
+    <!-- Date Range Search -->
+    <label>Start Date:</label>
+    <input type="date" v-model="startDate" />
+    <label>End Date:</label>
+    <input type="date" v-model="endDate" />
+  </div>
 
   <div class="center">
     <table>
@@ -539,6 +632,8 @@ function filteredCrimes() {}
           v-for="crime in crimes"
           :key="crime.case_number"
           :class="getCrimeColor(crime.incident)"
+          :id="isSelectedCrime(crime) ? 'selected-crime' : ''"
+          @click="updateSelectedCrime(crime)"
         >
           <td>{{ crime.case_number }}</td>
           <td>{{ crime.date }}</td>
@@ -730,5 +825,9 @@ function filteredCrimes() {}
 .delete-btn:hover {
   background-color: #000;
   color: #d32323;
+}
+
+#selected-crime {
+  background-color: #c4c4c4;
 }
 </style>
