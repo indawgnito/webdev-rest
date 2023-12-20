@@ -126,21 +126,27 @@ function initializeCrimes() {
   // add to marker popups with
   let promises = [];
   // running in parallel
-  console.log(crime_url.value);
-  for (let i = 0; i < map.neighborhood_markers.length; i++) {
-    promises.push(
-      fetch(`${crime_url.value}/incidents?neighborhood=${i + 1}&limit=100000`)
-        .then((result) => {
-          return result.json();
-        })
-        .then((data) => {
-          console.log(data);
-          map.neighborhood_markers[i].marker.bindPopup(
-            `Neighborhood ${i + 1}: ${data.length} crimes committed`
-          );
-        })
-    );
-  }
+  //   console.log(crime_url.value);
+
+  let neighborhoods = [
+    { id: 1, label: "Conway/Battlecreek/Highwood", crimes: 0 },
+    { id: 2, label: "Greater East Side", crimes: 0 },
+    { id: 3, label: "West Side", crimes: 0 },
+    { id: 4, label: "Dayton's Bluff", crimes: 0 },
+    { id: 5, label: "Payne/Phalen", crimes: 0 },
+    { id: 6, label: "North End", crimes: 0 },
+    { id: 7, label: "Thomas/Dale(Frogtown)", crimes: 0 },
+    { id: 8, label: "Summit/University", crimes: 0 },
+    { id: 9, label: "West Seventh", crimes: 0 },
+    { id: 10, label: "Como", crimes: 0 },
+    { id: 11, label: "Hamline/Midway", crimes: 0 },
+    { id: 12, label: "St. Anthony", crimes: 0 },
+    { id: 13, label: "Union Park", crimes: 0 },
+    { id: 14, label: "Macalester-Groveland", crimes: 0 },
+    { id: 15, label: "Highland", crimes: 0 },
+    { id: 16, label: "Summit Hill", crimes: 0 },
+    { id: 17, label: "Capitol River", crimes: 0 },
+  ];
 
   // create a promise to request the 1000 most recent
   const crimePromise = fetch(`${crime_url.value}/incidents?limit=1000`)
@@ -148,13 +154,28 @@ function initializeCrimes() {
       return result.json();
     })
     .then((data) => {
+      data.forEach((crime) => {
+        neighborhoods.forEach((neighborhood) => {
+          if (neighborhood.id === crime.neighborhood_number) {
+            neighborhood.crimes++;
+          }
+        });
+      });
+      console.log(neighborhoods);
+
+      neighborhoods.forEach((neighborhood) => {
+        map.neighborhood_markers[neighborhood.id].marker.bindPopup(
+          `${neighborhood.label}: ${neighborhood.crimes} crimes committed`
+        );
+      });
+
       crimes.value = data;
     });
 
   promises.push(crimePromise);
 
   Promise.all(promises).then(() => {
-    console.log("done");
+    // console.log("done");
   });
 }
 
@@ -343,45 +364,44 @@ let incidents = ref([
 
 let selectedNeighborhoods = ref([]);
 let neighborhoods = ref([
-{ id: 1, label: "Conway/Battlecreek/Highwood"},
-  { id: 2, label: "Greater East Side"},
+  { id: 1, label: "Conway/Battlecreek/Highwood" },
+  { id: 2, label: "Greater East Side" },
   { id: 3, label: "West Side" },
   { id: 4, label: "Dayton's Bluff" },
-  { id: 5, label: "Payne/Phalen"},
+  { id: 5, label: "Payne/Phalen" },
   { id: 6, label: "North End" },
   { id: 7, label: "Thomas/Dale(Frogtown)" },
   { id: 8, label: "Summit/University" },
-  { id: 9, label: "West Seventh"},
-  { id: 10, label: "Como"},
-  { id: 11, label: "Hamline/Midway"},
+  { id: 9, label: "West Seventh" },
+  { id: 10, label: "Como" },
+  { id: 11, label: "Hamline/Midway" },
   { id: 12, label: "St. Anthony" },
   { id: 13, label: "Union Park" },
   { id: 14, label: "Macalester-Groveland" },
   { id: 15, label: "Highland" },
   { id: 16, label: "Summit Hill" },
-  { id: 17, label:  "Capitol River"}
+  { id: 17, label: "Capitol River" },
 ]);
 
 function filteredCrimes() {}
 
-
 function filterCrimes() {
-  console.log(selectedIncidents.value)
-  console.log(selectedIncidents.value.length)
-  console.log(selectedNeighborhoods.value)
-  console.log(selectedNeighborhoods.value.length)
-  console.log(maxIncidents.value)
-  console.log(startDate.value)
-  console.log(endDate.value)
-  console.log('Button clicked!')
+  console.log(selectedIncidents.value);
+  console.log(selectedIncidents.value.length);
+  console.log(selectedNeighborhoods.value);
+  console.log(selectedNeighborhoods.value.length);
+  console.log(maxIncidents.value);
+  console.log(startDate.value);
+  console.log(endDate.value);
+  console.log("Button clicked!");
   //fetch each selection separately and then add them all to crimes
   for (let i = 0; i < selectedIncidents.value.length; i++) {
-    fetch(`${crime_url.value}/incidents?`)
+    fetch(`${crime_url.value}/incidents?`);
   }
   for (let i = 0; i < selectedNeighborhoods.value.length; i++) {
-    fetch(`${crime_url.value}/incidents?`)
+    fetch(`${crime_url.value}/incidents?`);
   }
-  
+
   //fetch(`${crime_url.value}/incidents?`)
 
   // crimes = .... find a way to update crimes based on filtered data
@@ -426,8 +446,8 @@ function updateSelectedCrime(crime) {
       return result.json();
     })
     .then((data) => {
-      console.log("TEST");
-      console.log(data);
+      //   console.log("TEST");
+      //   console.log(data);
 
       // remove old marker
       if (red_markers.value.length > 0) {
@@ -648,8 +668,8 @@ function removeXs(str) {
   </div>
 
   <div>
-  <button class="button" v-on:click="filterCrimes">Apply Filters</button>
-</div>
+    <button class="button" v-on:click="filterCrimes">Apply Filters</button>
+  </div>
 
   <div class="center">
     <table>
