@@ -405,31 +405,59 @@ let neighborhoods = ref([
 
 function filteredCrimes() {}
 
+// function filterCrimes() {
+//   console.log(selectedIncidents.value);
+//   console.log(selectedIncidents.value.length);
+//   console.log(selectedNeighborhoods.value);
+//   console.log(selectedNeighborhoods.value.length);
+//   console.log(maxIncidents.value);
+//   console.log(startDate.value);
+//   console.log(endDate.value);
+//   console.log("Button clicked!");
+//   //fetch each selection separately and then add them all to crimes
+
+//   for (let i = 0; i < selectedIncidents.value.length; i++) {
+//     console.log(selectedIncidents.value[i]);
+//   }
+
+//   for (let i = 0; i < selectedIncidents.value.length; i++) {
+//     fetch(`${crime_url.value}/incidents?`);
+//   }
+//   for (let i = 0; i < selectedNeighborhoods.value.length; i++) {
+//     fetch(`${crime_url.value}/incidents?`);
+//   }
+
+//   //fetch(`${crime_url.value}/incidents?`)
+
+//   // crimes = .... find a way to update crimes based on filtered data
+// }
+
 function filterCrimes() {
-  console.log(selectedIncidents.value);
-  console.log(selectedIncidents.value.length);
-  console.log(selectedNeighborhoods.value);
-  console.log(selectedNeighborhoods.value.length);
-  console.log(maxIncidents.value);
-  console.log(startDate.value);
-  console.log(endDate.value);
   console.log("Button clicked!");
-  //fetch each selection separately and then add them all to crimes
+  let string = `${crime_url.value}/incidents?`;
 
-  for (let i = 0; i < selectedIncidents.value.length; i++) {
-    console.log(selectedIncidents.value[i]);
-  }
-
-  for (let i = 0; i < selectedIncidents.value.length; i++) {
-    fetch(`${crime_url.value}/incidents?`);
-  }
+  if (selectedNeighborhoods.value.length > 0) string = string + `neighborhood=`;
   for (let i = 0; i < selectedNeighborhoods.value.length; i++) {
-    fetch(`${crime_url.value}/incidents?`);
+    if (i == selectedNeighborhoods.value.length - 1)
+      string = string + `${selectedNeighborhoods.value[i]}`;
+    else string = string + `${selectedNeighborhoods.value[i]},`;
   }
+  console.log(string);
+  // if(selectedIncidents.value.length > 0)
+  //   string = string + '?code='
 
-  //fetch(`${crime_url.value}/incidents?`)
+  // let maxIncidents = getElementById('maxIncidents');
+  // let startDatee = getElementById('start');
+  // let endDatee = getElementById('end');
 
-  // crimes = .... find a way to update crimes based on filtered data
+  fetch(string)
+    .then((result) => {
+      return result.json();
+    })
+    .then((data) => {
+      crimes.value = data;
+      console.log(data);
+    });
 }
 
 function updateSelectedCrime(crime) {
