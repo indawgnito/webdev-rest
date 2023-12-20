@@ -35,23 +35,23 @@ let map = reactive({
     se: { lat: 44.883658, lng: -92.993787 },
   },
   neighborhood_markers: [
-    { location: [44.942068, -93.020521], marker: null },
-    { location: [44.977413, -93.025156], marker: null },
-    { location: [44.931244, -93.079578], marker: null },
-    { location: [44.956192, -93.060189], marker: null },
-    { location: [44.978883, -93.068163], marker: null },
-    { location: [44.975766, -93.113887], marker: null },
-    { location: [44.959639, -93.121271], marker: null },
-    { location: [44.9477, -93.128505], marker: null },
-    { location: [44.930276, -93.119911], marker: null },
-    { location: [44.982752, -93.14791], marker: null },
-    { location: [44.963631, -93.167548], marker: null },
-    { location: [44.973971, -93.197965], marker: null },
-    { location: [44.949043, -93.178261], marker: null },
-    { location: [44.934848, -93.176736], marker: null },
-    { location: [44.913106, -93.170779], marker: null },
-    { location: [44.937705, -93.136997], marker: null },
-    { location: [44.949203, -93.093739], marker: null },
+    { id: 1, location: [44.942068, -93.020521], marker: null },
+    { id: 2, location: [44.977413, -93.025156], marker: null },
+    { id: 3, location: [44.931244, -93.079578], marker: null },
+    { id: 4, location: [44.956192, -93.060189], marker: null },
+    { id: 5, location: [44.978883, -93.068163], marker: null },
+    { id: 6, location: [44.975766, -93.113887], marker: null },
+    { id: 7, location: [44.959639, -93.121271], marker: null },
+    { id: 8, location: [44.9477, -93.128505], marker: null },
+    { id: 9, location: [44.930276, -93.119911], marker: null },
+    { id: 10, location: [44.982752, -93.14791], marker: null },
+    { id: 11, location: [44.963631, -93.167548], marker: null },
+    { id: 12, location: [44.973971, -93.197965], marker: null },
+    { id: 13, location: [44.949043, -93.178261], marker: null },
+    { id: 14, location: [44.934848, -93.176736], marker: null },
+    { id: 15, location: [44.913106, -93.170779], marker: null },
+    { id: 16, location: [44.937705, -93.136997], marker: null },
+    { id: 17, location: [44.949203, -93.093739], marker: null },
   ],
 });
 
@@ -154,20 +154,40 @@ function initializeCrimes() {
       return result.json();
     })
     .then((data) => {
-      data.forEach((crime) => {
-        neighborhoods.forEach((neighborhood) => {
+      for (let i = 0; i < data.length; i++) {
+        let crime = data[i];
+        for (let j = 0; j < neighborhoods.length; j++) {
+          let neighborhood = neighborhoods[j];
           if (neighborhood.id === crime.neighborhood_number) {
             neighborhood.crimes++;
           }
-        });
-      });
+        }
+      }
+      //   data.forEach((crime) => {
+      //     neighborhoods.forEach((neighborhood) => {
+      //       if (neighborhood.id === crime.neighborhood_number) {
+      //         neighborhood.crimes++;
+      //       }
+      //     });
+      //   });
       console.log(neighborhoods);
 
-      neighborhoods.forEach((neighborhood) => {
-        map.neighborhood_markers[neighborhood.id].marker.bindPopup(
+      for (let i = 0; i < neighborhoods.length; i++) {
+        let neighborhood = neighborhoods[i];
+        map.neighborhood_markers[i].marker.bindPopup(
           `${neighborhood.label}: ${neighborhood.crimes} crimes committed`
         );
-      });
+      }
+
+      //   neighborhoods.forEach((neighborhood) => {
+      //     try {
+      //       map.neighborhood_markers[neighborhood.id].marker.bindPopup(
+      //         `${neighborhood.label}: ${neighborhood.crimes} crimes committed`
+      //       );
+      //     } catch (error) {
+      //       console.log("oh an error!");
+      //     }
+      //   });
 
       crimes.value = data;
     });
@@ -395,6 +415,11 @@ function filterCrimes() {
   console.log(endDate.value);
   console.log("Button clicked!");
   //fetch each selection separately and then add them all to crimes
+
+  for (let i = 0; i < selectedIncidents.value.length; i++) {
+    console.log(selectedIncidents.value[i]);
+  }
+
   for (let i = 0; i < selectedIncidents.value.length; i++) {
     fetch(`${crime_url.value}/incidents?`);
   }
