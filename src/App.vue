@@ -8,6 +8,9 @@ let latitude = ref(44.955139);
 let longitude = ref(-93.102222);
 let dialog_err = ref(false);
 let red_markers = ref([]);
+let maxIncidents = ref();
+let startDate = ref();
+let endDate = ref();
 // selected crime will update when users click on a row
 let selected_crime = reactive({
   case_number: "",
@@ -340,26 +343,49 @@ let incidents = ref([
 
 let selectedNeighborhoods = ref([]);
 let neighborhoods = ref([
-  { id: 1, label: "Saint Anthony Park" },
-  { id: 2, label: "Como Park" },
-  { id: 3, label: "Hamline-Midway" },
-  { id: 4, label: "Union Park" },
-  { id: 5, label: "Macalester-Groveland" },
-  { id: 6, label: "Highland" },
-  { id: 7, label: "North End" },
-  { id: 8, label: "Frogtown" },
-  { id: 9, label: "Summit University" },
-  { id: 10, label: "Summit Hill" },
-  { id: 11, label: "West Seventh" },
-  { id: 12, label: "West Side" },
-  { id: 13, label: "Downtown" },
-  { id: 14, label: "Payne-Phalen" },
-  { id: 15, label: "Dayton's Bluff" },
-  { id: 16, label: "Greater East Side" },
-  { id: 17, label: "Southeast" },
+{ id: 1, label: "Conway/Battlecreek/Highwood"},
+  { id: 2, label: "Greater East Side"},
+  { id: 3, label: "West Side" },
+  { id: 4, label: "Dayton's Bluff" },
+  { id: 5, label: "Payne/Phalen"},
+  { id: 6, label: "North End" },
+  { id: 7, label: "Thomas/Dale(Frogtown)" },
+  { id: 8, label: "Summit/University" },
+  { id: 9, label: "West Seventh"},
+  { id: 10, label: "Como"},
+  { id: 11, label: "Hamline/Midway"},
+  { id: 12, label: "St. Anthony" },
+  { id: 13, label: "Union Park" },
+  { id: 14, label: "Macalester-Groveland" },
+  { id: 15, label: "Highland" },
+  { id: 16, label: "Summit Hill" },
+  { id: 17, label:  "Capitol River"}
 ]);
 
 function filteredCrimes() {}
+
+
+function filterCrimes() {
+  console.log(selectedIncidents.value)
+  console.log(selectedIncidents.value.length)
+  console.log(selectedNeighborhoods.value)
+  console.log(selectedNeighborhoods.value.length)
+  console.log(maxIncidents.value)
+  console.log(startDate.value)
+  console.log(endDate.value)
+  console.log('Button clicked!')
+  //fetch each selection separately and then add them all to crimes
+  for (let i = 0; i < selectedIncidents.value.length; i++) {
+    fetch(`${crime_url.value}/incidents?`)
+  }
+  for (let i = 0; i < selectedNeighborhoods.value.length; i++) {
+    fetch(`${crime_url.value}/incidents?`)
+  }
+  
+  //fetch(`${crime_url.value}/incidents?`)
+
+  // crimes = .... find a way to update crimes based on filtered data
+}
 
 function updateSelectedCrime(crime) {
   // handle deselection
@@ -620,6 +646,10 @@ function removeXs(str) {
     <label>End Date:</label>
     <input type="date" v-model="endDate" />
   </div>
+
+  <div>
+  <button class="button" v-on:click="filterCrimes">Apply Filters</button>
+</div>
 
   <div class="center">
     <table>
