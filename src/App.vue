@@ -436,19 +436,47 @@ function filterCrimes() {
   console.log("Button clicked!");
   let string = `${crime_url.value}/incidents?`;
 
+  let reqParams = [];
+
   if (selectedNeighborhoods.value.length > 0) string = string + `neighborhood=`;
   for (let i = 0; i < selectedNeighborhoods.value.length; i++) {
     if (i == selectedNeighborhoods.value.length - 1)
       string = string + `${selectedNeighborhoods.value[i]}`;
     else string = string + `${selectedNeighborhoods.value[i]},`;
+    reqParams.push(selectedNeighborhoods.value[i]);
   }
   console.log(string);
   // if(selectedIncidents.value.length > 0)
   //   string = string + '?code='
 
-  // let maxIncidents = getElementById('maxIncidents');
-  // let startDatee = getElementById('start');
-  // let endDatee = getElementById('end');
+  let maxIncidents = document.getElementById("maxIncidents");
+  if (!reqParams) {
+    string += "?";
+  } else {
+    string += "&";
+  }
+  string += `limit=${maxIncidents.value}`;
+  reqParams.push(maxIncidents.value);
+
+  let startDate = document.getElementById("start");
+
+  if (!reqParams) {
+    string += "?";
+  } else {
+    string += "&";
+  }
+  string += `start_date=${startDate.value}`;
+  reqParams.push(startDate.value);
+
+  let endDatee = document.getElementById("end");
+
+  if (!reqParams) {
+    string += "?";
+  } else {
+    string += "&";
+  }
+  string += `end_date=${endDate.value}`;
+  reqParams.push(endDate.value);
 
   fetch(string)
     .then((result) => {
@@ -711,13 +739,13 @@ function removeXs(str) {
   <!-- Max Incidents Search -->
   <div style="margin: 2em">
     <label>Max Incidents:</label>
-    <input type="number" v-model="maxIncidents" />
+    <input id="maxIncidents" type="number" v-model="maxIncidents" />
 
     <!-- Date Range Search -->
     <label>Start Date:</label>
-    <input type="date" v-model="startDate" />
+    <input id="start" type="date" v-model="startDate" />
     <label>End Date:</label>
-    <input type="date" v-model="endDate" />
+    <input id="end" type="date" v-model="endDate" />
   </div>
 
   <div>
