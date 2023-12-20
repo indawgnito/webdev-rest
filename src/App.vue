@@ -7,6 +7,7 @@ let crime_url = ref("");
 let latitude = ref(44.955139);
 let longitude = ref(-93.102222);
 let dialog_err = ref(false);
+let red_markers = ref([]);
 // selected crime will update when users click on a row
 let selected_crime = reactive({
   case_number: "",
@@ -402,6 +403,12 @@ function updateSelectedCrime(crime) {
       console.log("TEST");
       console.log(data);
 
+      // remove old marker
+      if (red_markers.value.length > 0) {
+        map.leaflet.removeLayer(red_markers.value[0]);
+        red_markers.value = [];
+      }
+
       // define red icon
       // I chose that icon size cuz those are half the dimensions of the img
       // and the img is 50x82
@@ -422,6 +429,8 @@ function updateSelectedCrime(crime) {
       marker.bindPopup(
         `<b>Case Number:</b> ${crime.case_number}<br><b>Date:</b> ${crime.date}<br><b>Time:</b> ${crime.time}<br><b>Code:</b> ${crime.code}<br><b>Incident:</b> ${crime.incident}<br><b>Police Grid:</b> ${crime.police_grid}<br><b>Neighborhood Number:</b> ${crime.neighborhood_number}<br><b>Block:</b> ${crime.block}`
       );
+
+      red_markers.value.push(marker);
     });
 }
 
