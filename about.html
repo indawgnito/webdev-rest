@@ -15,6 +15,11 @@
           color: #333;
         }
     
+        .center {
+        display: flex;
+        justify-content: center;
+        }
+
         .grid-container {
           margin: 2em;
         }
@@ -80,8 +85,11 @@
         <li>
           <ul>
             <li class="team-member-box">
-              Joshua Kahlbaugh
-              <p class="bio">Bio and pic:</p>
+              <h1 class="center">Joshua Kahlbaugh</h1>
+              <img class="center" src="./public/img/headshot.jpg" alt="Josh's Picture">
+              <p>Hi! My name is Joshua Kahlbaugh and I'm majoring in Computer Science at 
+                the University of Saint Thomas, MN. I'm originally from Duluth, MN. This is a project 
+                that I've been working on in Web Development class!</p>
             </li>
             <li class="team-member-box">
               Parker Grant
@@ -94,18 +102,27 @@
           </ul>
         </li>
       </ul>
-        <p class="team-member-box">Description of tools:</p>
+        <p class="team-member-box">Description of tools:
+            The frameworks used to create this web application are vue js, and foundation css.
+            Vue js helped us to layout javascript code and css together in one file as well as the 
+            the capability to make components such as the modal for adding new crimes in our application.
+            Foundation css was useful for styling and centering our elements as well as keeping a theme
+            of how we wanted our pages layed out.
+            We created a RESTful server api to retrieve crime data from an sqlite 
+            database of crimes committed around Saint Paul. We used the leaflet js api to layout the map
+            and to create markers on the map. Lastly, 
+        </p>
     
         <p class="team-member-box">Video Demo: </p>
     
           <ul class="team-member-box"> Six Interesting Findings from the application:
             <li></li>
-            <li>One:</li>
-            <li>Two:</li>
-            <li>Three:</li>
-            <li>Four:</li>
-            <li>Five:</li>
-            <li>Six:</li>
+            <li>One: Capitol river has the highest number of crimes from the top 1000 crimes in the database.</li>
+            <li>Two: A large proportion of submitted incidents reported were proactive police visits.</li>
+            <li>Three: Many of the crimes from the Union Park neighborhood around Saint Thomas were thefts.</li>
+            <li>Four: We didn't know that there were 17 distinct neighborhoods around Saint Paul.</li>
+            <li>Five: Violent crimes are relatively rare being the rarest group of crimes.</li>
+            <li>Six: There really isn't much of a pattern for what type of crime will occur at what time.</li>
           </ul>
       </ul>
     </div>

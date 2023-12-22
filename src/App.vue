@@ -595,6 +595,7 @@ function removeXs(str) {
     <br />
     <button class="button" type="button" @click="closeDialog">OK</button>
   </dialog>
+  <h1 class="center">Crimes in Saint Paul</h1>
   <div class="grid-container">
     <div class="grid-x grid-padding-x">
       <div id="leafletmap" class="cell auto"></div>
@@ -635,6 +636,10 @@ function removeXs(str) {
     >
       Go
     </button>
+  </div>
+  <br />
+  <div class="center">
+    <a href="../about.html" class="button">About Us</a>
   </div>
   <hr />
   <div class="center">
@@ -684,7 +689,7 @@ function removeXs(str) {
       justify-content: center;
     "
   >
-    Filter Crime
+    Filter Crimes
   </h3>
   <div id="app">
     <p style="margin: 2em">Incidents:</p>
@@ -819,7 +824,7 @@ function removeXs(str) {
 <style>
 #rest-dialog {
   width: 20rem;
-  margin-top: 1rem;
+  margin-top: 5rem;
   z-index: 1000;
 }
 
